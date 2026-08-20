@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>YDS 60 Gün</title>
+<meta name="theme-color" content="#111318">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="YDS 60 Gün">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,650&family=Source+Sans+3:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#111318;
+  --line:rgba(255,255,255,.08);
+  --text:#f3f1ec;
+  --sub:#a7a39b;
+  --muted:#6d717b;
+  --accent:#d2b078;
+  --green:#55c48a;
+  --red:#ef6b6b;
+  --blue:#6ba4ff;
+  --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Source Sans 3',sans-serif;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(210,176,120,.12), transparent 36%),
+    linear-gradient(180deg,#14171e,#0f1116 55%);
+  color:var(--text);
+  min-height:100vh;
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer;touch-action:manipulation}
+.app{
+  max-width:560px;margin:0 auto;min-height:100vh;
+  padding:14px 14px calc(84px + var(--safe-b));
+}
+.topbar{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.brand{font-family:'Literata',serif;font-size:22px;color:var(--accent)}
+.meta{font-size:12px;color:var(--sub);text-align:right;line-height:1.4}
+.meta strong{color:var(--text);font-weight:600}
+.home-card,.panel,.study-shell{
+  background:rgba(26,29,37,.96);
+  border:1px solid var(--line);
+  border-radius:22px;
+}
+.home-card{padding:20px;margin-bottom:12px}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.home-title{font-family:'Literata',serif;font-size:28px;line-height:1.15;margin-bottom:8px}
+.home-copy{font-size:14px;color:var(--sub);line-height:1.6;margin-bottom:16px}
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.stat{
+  background:rgba(255,255,255,.03);border:1px solid var(--line);
+  border-radius:14px;padding:12px;text-align:center
+}
+.stat b{display:block;font-size:20px;color:var(--accent);line-height:1}
+.stat span{display:block;font-size:11px;color:var(--muted);margin-top:6px}
+.btn-row{display:grid;gap:8px}
+.primary-btn,.ghost-btn,.soft-btn,.danger-btn{
+  width:100%;border:none;border-radius:14px;padding:14px 16px;font-weight:600
+}
+.primary-btn{background:var(--accent);color:#1d160b}
+.ghost-btn{background:transparent;border:1px solid var(--line);color:var(--text)}
+.soft-btn{background:rgba(255,255,255,.04);border:1px solid var(--line);color:var(--text)}
+.danger-btn{background:rgba(239,107,107,.1);border:1px solid rgba(239,107,107,.28);color:var(--red)}
+.nav{
+  position:fixed;left:50%;transform:translateX(-50%);
+  bottom:0;width:min(560px,100%);
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:4px;padding:10px 10px calc(10px + var(--safe-b));
+  background:rgba(17,19,24,.94);backdrop-filter:blur(10px);
+  border-top:1px solid var(--line);z-index:40
+}
+.nav button{
+  background:transparent;border:none;color:var(--muted);
+  padding:10px 8px;border-radius:12px;font-size:13px;font-weight:600
+}
+.nav button.active{color:var(--text);background:rgba(210,176,120,.12)}
+.view{display:none}
+.view.active{display:block}
+.study-shell{padding:16px;min-height:68vh}
+.study-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:12px}
+.study-stage{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.study-title{font-size:16px;font-weight:700;margin-top:4px}
+.study-progress{font-size:13px;color:var(--sub);white-space:nowrap}
+.study-word{font-family:'Literata',serif;font-size:40px;line-height:1.1;margin:8px 0 10px}
+.study-type{
+  display:inline-flex;padding:5px 10px;border-radius:999px;
+  background:rgba(107,164,255,.12);color:var(--blue);font-size:12px;font-weight:700;margin-bottom:12px
+}
+.study-meaning{font-size:22px;font-weight:700;margin-bottom:14px}
+.details{display:grid;gap:10px}
+.detail{
+  background:rgba(255,255,255,.03);border:1px solid var(--line);
+  border-radius:14px;padding:12px
+}
+.detail label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:6px}
+.detail p{font-size:14px;line-height:1.65}
+.detail p.sub{color:var(--sub);margin-top:4px}
+.mark{color:var(--accent);font-weight:700}
+.study-actions,.recall-actions{display:grid;gap:8px;margin-top:14px}
+.recall-wrap{display:none;margin-top:12px}
+.recall-wrap.show{display:grid;gap:10px}
+.input,.textarea,.select{
+  width:100%;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.14);
+  border-radius:14px;color:var(--text);padding:14px 15px;outline:none
+}
+.input:focus,.textarea:focus,.select:focus{border-color:var(--accent)}
+.textarea{min-height:90px;resize:vertical}
+.feedback{display:none;padding:12px 14px;border-radius:14px;border:1px solid var(--line)}
+.feedback.show{display:block}
+.feedback.ok{background:rgba(85,196,138,.1);border-color:rgba(85,196,138,.28)}
+.feedback.fail{background:rgba(239,107,107,.08);border-color:rgba(239,107,107,.22)}
+.feedback strong{display:block;margin-bottom:4px}
+.feedback p{font-size:13px;color:var(--sub);line-height:1.6}
+.review-dots{display:flex;gap:7px;margin:10px 0}
+.review-dots i{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.06);border:1px solid var(--line);display:block}
+.review-dots i.filled{background:var(--accent);border-color:var(--accent)}
+.empty-state{padding:28px 12px;text-align:center;color:var(--sub);line-height:1.7}
+.panel{padding:16px;margin-bottom:12px}
+.card-title{font-size:18px;font-weight:700;margin-bottom:6px}
+.card-sub{font-size:13px;color:var(--sub);line-height:1.6;margin-bottom:12px}
+.list-head{display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+.add-form{display:none;gap:10px;margin-bottom:12px}
+.add-form.vis{display:grid}
+.field{display:grid;gap:5px}
+.field label{font-size:12px;color:var(--muted)}
+.word-list{display:grid;gap:10px}
+.day-group{border:1px solid var(--line);border-radius:16px;padding:12px;background:rgba(255,255,255,.02)}
+.day-group-head{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-bottom:8px}
+.word-row{padding:10px 0;border-top:1px solid var(--line)}
+.word-row:first-of-type{border-top:none}
+.word-main strong{display:block;font-size:16px}
+.word-main span,.word-extra{font-size:12px;color:var(--sub);line-height:1.5}
+.word-level{display:inline-flex;margin-top:8px;padding:4px 8px;border-radius:999px;font-size:11px}
+.lvl-new{background:rgba(107,164,255,.12);color:var(--blue)}
+.lvl-learning{background:rgba(210,176,120,.14);color:var(--accent)}
+.lvl-review{background:rgba(85,196,138,.14);color:var(--green)}
+.setting-row{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:12px 0;border-top:1px solid var(--line)}
+.setting-row:first-child{border-top:none}
+.setting-row strong{display:block;font-size:14px}
+.setting-row span{display:block;font-size:12px;color:var(--sub);margin-top:2px}
+.mini{font-size:12px;color:var(--sub);margin-top:8px}
+.hidden{display:none!important}
+.notif{
+  position:fixed;left:50%;bottom:calc(78px + var(--safe-b));transform:translateX(-50%) translateY(20px);
+  opacity:0;transition:.2s ease;background:#242833;border:1px solid rgba(255,255,255,.14);
+  color:var(--text);padding:11px 14px;border-radius:12px;z-index:50;width:min(420px,calc(100% - 28px));text-align:center;font-size:13px
+}
+.notif.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.loading{position:fixed;inset:0;background:rgba(15,17,22,.94);display:none;align-items:center;justify-content:center;z-index:60}
+.loading.active{display:flex}
+.loading-box{text-align:center}
+.loading-box strong{display:block;font-family:'Literata',serif;font-size:24px;color:var(--accent);margin-bottom:8px}
+.loading-box span{font-size:13px;color:var(--sub)}
+@media(min-width:720px){
+  .study-word{font-size:46px}
+  .home-title{font-size:32px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand">YDS 60 Gün</div>
+    <div class="meta">Gün <strong id="m-next-day">1</strong><br><span id="top-status">Hazır</span></div>
+  </div>
+
+  <div id="tab-learn" class="view active">
+    <div id="home-panel" class="home-card">
+      <div class="eyebrow">Bugün</div>
+      <div class="home-title" id="hero-title">Çalışmaya hazır</div>
+      <div class="home-copy" id="hero-copy">Önce tekrarlar, sonra yeni gün.</div>
+      <div class="stats-row">
+        <div class="stat"><b id="m-day-words">0</b><span>Yeni</span></div>
+        <div class="stat"><b id="m-due">0</b><span>Tekrar</span></div>
+        <div class="stat"><b id="h-streak">0</b><span>Seri</span></div>
+      </div>
+      <div class="btn-row">
+        <button class="primary-btn" id="hero-primary" onclick="startTodayFlow()">Başla</button>
+      </div>
+      <div class="mini" id="goal-copy">Tekrarlar bitmeden yeni güne geçilmez.</div>
+    </div>
+
+    <div class="study-shell">
+      <div class="study-top">
+        <div>
+          <div class="study-stage" id="study-stage">Hazırlık</div>
+          <div class="study-title" id="study-title">Henüz başlamadı</div>
+        </div>
+        <div class="study-progress" id="study-progress">-</div>
+      </div>
+      <div class="study-card">
+        <div id="study-empty" class="empty-state">Başla butonuna bas. Önce tekrar, sonra günün kelimeleri.</div>
+        <div id="study-view" class="hidden">
+          <div class="study-word" id="study-word">word</div>
+          <div class="study-type" id="study-type">isim</div>
+          <div id="study-front">
+            <div class="study-meaning" id="study-meaning">Türkçe</div>
+            <div class="details">
+              <div class="detail">
+                <label>Örnek</label>
+                <p id="study-example">-</p>
+                <p class="sub" id="study-translation">-</p>
+              </div>
+              <div class="detail">
+                <label>Eş / Yakın</label>
+                <p id="study-synonyms">-</p>
+              </div>
+              <div class="detail">
+                <label>Zıt</label>
+                <p id="study-antonyms">-</p>
+              </div>
+              <div class="detail">
+                <label>Diğer halleri</label>
+                <p id="study-forms">-</p>
+              </div>
+            </div>
+          </div>
+          <div class="review-dots" id="review-dots"></div>
+          <div class="study-actions" id="study-actions"></div>
+          <div class="recall-wrap" id="recall-wrap">
+            <input id="answer-input" class="input" type="text" placeholder="Türkçe karşılığı yaz..." autocomplete="off" spellcheck="false" enterkeyhint="done">
+            <div class="recall-actions">
+              <button class="primary-btn" onclick="submitAnswer()">Kontrol Et</button>
+              <button class="ghost-btn" onclick="showHint()">İpucu</button>
+            </div>
+            <div id="feedback" class="feedback">
+              <strong id="feedback-title"></strong>
+              <p id="feedback-copy"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="tab-words" class="view">
+    <div class="panel">
+      <div class="list-head">
+        <div>
+          <div class="card-title">Kelimeler</div>
+          <div class="card-sub">Manuel ekle. Vurgu için *kelime* yaz.</div>
+        </div>
+        <input id="search-input" class="input" type="search" placeholder="Ara..." oninput="renderWords()">
+        <button class="primary-btn" onclick="toggleAddForm()">+ Ekle</button>
+      </div>
+      <div id="add-form" class="add-form">
+        <div class="field"><label>Gün</label><select id="f-day" class="select"></select></div>
+        <div class="field"><label>İngilizce</label><input id="f-word" class="input" type="text" placeholder="trifling"></div>
+        <div class="field"><label>Türü</label><input id="f-type" class="input" type="text" placeholder="sıfat"></div>
+        <div class="field"><label>Türkçe</label><input id="f-meaning" class="input" type="text" placeholder="önemsiz"></div>
+        <div class="field"><label>Örnek</label><input id="f-example" class="input" type="text" placeholder="It was a *trifling* sum."></div>
+        <div class="field"><label>Çeviri</label><input id="f-translation" class="input" type="text" placeholder="*Önemsiz* bir miktardı."></div>
+        <div class="field"><label>Eş / Yakın</label><input id="f-synonyms" class="input" type="text"></div>
+        <div class="field"><label>Zıt</label><input id="f-antonyms" class="input" type="text"></div>
+        <div class="field"><label>Diğer halleri</label><textarea id="f-forms" class="textarea"></textarea></div>
+        <button class="primary-btn" onclick="saveWord()">Kaydet</button>
+        <button class="ghost-btn" onclick="toggleAddForm()">Kapat</button>
+      </div>
+      <div id="word-list" class="word-list"></div>
+    </div>
+  </div>
+
+  <div id="tab-settings" class="view">
+    <div class="panel">
+      <div class="card-title">Özet</div>
+      <div class="stats-row" style="margin-top:10px">
+        <div class="stat"><b id="h-total">0</b><span>Kelime</span></div>
+        <div class="stat"><b id="h-complete">0</b><span>Gün</span></div>
+        <div class="stat"><b id="m-permanent">0</b><span>Kalıcı</span></div>
+      </div>
+      <div class="mini" id="goal-title">0 / 60 gün</div>
+    </div>
+    <div class="panel">
+      <div class="card-title">Ayarlar</div>
+      <div class="setting-row">
+        <div><strong>Toplam gün</strong><span>Varsayılan 60</span></div>
+        <input id="set-total-days" class="input" style="width:84px" type="number" min="1" max="365" onchange="saveSetting('totalDays', this.value)">
+      </div>
+      <div class="setting-row">
+        <div><strong>Günlük hedef</strong><span>20 kelime</span></div>
+        <input id="set-daily-goal" class="input" style="width:84px" type="number" min="1" max="100" onchange="saveSetting('dailyGoal', this.value)">
+      </div>
+      <div class="setting-row">
+        <div><strong>Yazım toleransı</strong><span>0-3</span></div>
+        <input id="set-fuzzy" class="input" style="width:84px" type="number" min="0" max="3" onchange="saveSetting('fuzzy', this.value)">
+      </div>
+    </div>
+    <div class="panel">
+      <div class="card-title">Veri</div>
+      <div class="btn-row">
+        <button class="primary-btn" onclick="exportData()">JSON indir</button>
+        <button class="soft-btn" onclick="document.getElementById('import-file').click()">JSON yükle</button>
+        <button class="ghost-btn" onclick="downloadTemplate()">Boş şablon</button>
+        <button class="danger-btn" onclick="resetAll()">Sıfırla</button>
+      </div>
+      <input id="import-file" type="file" accept=".json" class="hidden" onchange="importData(this)">
+      <div class="mini">Çoktan seçmeli yok. Yazarak hatırlama YDS için daha güçlü.</div>
+    </div>
+  </div>
+</div>
+
+<nav class="nav">
+  <button class="active" data-tab="learn" onclick="switchTab('learn', this)">Çalış</button>
+  <button data-tab="words" onclick="switchTab('words', this)">Kelimeler</button>
+  <button data-tab="settings" onclick="switchTab('settings', this)">Ayarlar</button>
+</nav>
+
+<div id="notif" class="notif"></div>
+<div id="loading" class="loading"><div class="loading-box"><strong>YDS 60 Gün</strong><span>Yükleniyor...</span></div></div>
+
+<div class="hidden">
+  <div id="h-review">0</div>
+  <div id="current-day-pill"></div>
+  <div id="plan-copy"></div>
+  <div id="agenda-list"></div>
+  <div id="review-list"></div>
+  <div id="day-grid"></div>
+  <div id="st-total">0</div>
+  <div id="st-complete">0</div>
+  <div id="st-due">0</div>
+  <div id="st-reviews">0</div>
+  <div id="stats-days"></div>
+  <div id="stats-log"></div>
+  <button id="hero-review" onclick="startDueReviews()"></button>
+</div>
+
+<script>
+const STORE = 'yds_60gun_v1';
+const OLD_STORE = 'yds_nd_v5';
+const REVIEW_STEPS = [1, 3, 6, 13, 20, 29];
+const DATA_URL = './kelimeler.json';
+
+let S = defaultState();
+let session = emptySession();
+
+function emptySession() {
+  return {
+    mode: null,
+    phase: 'study',
+    dayNumber: null,
+    pendingDay: null,
+    queue: [],
+    index: 0,
+    answered: false,
+    completedIds: []
+  };
+}
+
+function defaultState() {
+  return {
+    version: 2,
+    words: [],
+    settings: {
+      totalDays: 60,
+      dailyGoal: 20,
+      fuzzy: 1
+    },
+    stats: {
+      streak: 0,
+      lastStudyDate: null,
+      totalReviews: 0,
+      dailyLog: {}
+    },
+    lastUpdated: 0
+  };
+}
+
+function showLoading(show) {
+  document.getElementById('loading').classList.toggle('active', show);
+}
+
+function today() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function addDays(dateStr, amount) {
+  const date = new Date(dateStr + 'T12:00:00');
+  date.setDate(date.getDate() + amount);
+  return date.toISOString().slice(0, 10);
+}
+
+function shuffle(array) {
+  const arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function lev(a, b) {
+  const dp = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+  for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+  for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+  for (let i = 1; i <= a.length; i++) {
+    for (let j = 1; j <= b.length; j++) {
+      dp[i][j] = a[i - 1] === b[j - 1]
+        ? dp[i - 1][j - 1]
+        : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+    }
+  }
+  return dp[a.length][b.length];
+}
+
+function normalizeText(text) {
+  return (text || '')
+    .toLowerCase()
+    .replace(/[’']/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function meaningVariants(word) {
+  return String(stripMarks(word.meaning || ''))
+    .split(/[,/;]/)
+    .map(part => normalizeText(part))
+    .filter(Boolean);
+}
+
+function checkAnswer(input, word) {
+  const guess = normalizeText(input);
+  return meaningVariants(word).some(answer => lev(guess, answer) <= S.settings.fuzzy);
+}
+
+function persist() {
+  S.lastUpdated = Date.now();
+  localStorage.setItem(STORE, JSON.stringify(S));
+}
+
+function notify(message) {
+  const box = document.getElementById('notif');
+  box.textContent = message;
+  box.classList.add('show');
+  clearTimeout(notify._to);
+  notify._to = setTimeout(() => box.classList.remove('show'), 2200);
+}
+
+function ensureSettings() {
+  S.settings = S.settings || {};
+  S.settings.totalDays = Number(S.settings.totalDays || 60);
+  S.settings.dailyGoal = Number(S.settings.dailyGoal || 20);
+  S.settings.fuzzy = Number(S.settings.fuzzy ?? 1);
+  S.stats = S.stats || { streak: 0, lastStudyDate: null, totalReviews: 0, dailyLog: {} };
+  S.stats.dailyLog = S.stats.dailyLog || {};
+  S.words = (S.words || []).map((word, index) => normalizeWord(word, index));
+}
+
+function normalizeWord(word, index) {
+  const dayNumber = Number(word.dayNumber || inferDayNumber(word));
+  return {
+    id: String(word.id || ('w_' + Date.now() + '_' + index)),
+    dayNumber: Math.max(1, dayNumber || 1),
+    word: word.word || '',
+    type: word.type || word.partOfSpeech || 'belirsiz',
+    meaning: word.meaning || word.turkish || '',
+    example: word.example || '',
+    translation: word.translation || word.exampleTr || '',
+    synonyms: word.synonyms || '',
+    antonyms: word.antonyms || '',
+    forms: word.forms || word.otherForms || '',
+    status: word.status || (word.level === 'new' ? 'new' : 'learning'),
+    reviewStep: Number(word.reviewStep || 0),
+    reviewAnchorDay: Number(word.reviewAnchorDay || dayNumber || 1),
+    nextReviewDay: Number(word.nextReviewDay || 0),
+    nextReview: word.nextReview || null,
+    lastReviewed: word.lastReviewed || null,
+    completedAt: word.completedAt || null,
+    addedDate: word.addedDate || today()
+  };
+}
+
+function inferDayNumber(word) {
+  if (word.dayNumber) return Number(word.dayNumber);
+  if (word.deckId) {
+    const raw = String(word.deckId).match(/(\d+)/);
+    if (raw) return Number(raw[1]);
+  }
+  return 1;
+}
+
+function defaultTemplate() {
+  return {
+    version: 2,
+    settings: { totalDays: 60, dailyGoal: 20, fuzzy: 1 },
+    words: [],
+    stats: { streak: 0, lastStudyDate: null, totalReviews: 0, dailyLog: {} }
+  };
+}
+
+function migrateLegacyData(data) {
+  const base = defaultState();
+  if (!data || typeof data !== 'object') return base;
+
+  if (Array.isArray(data.words) && data.version === 2) {
+    base.words = data.words.map((word, index) => normalizeWord(word, index));
+    base.settings = { ...base.settings, ...(data.settings || {}) };
+    base.stats = { ...base.stats, ...(data.stats || {}) };
+    return base;
+  }
+
+  if (Array.isArray(data.words)) {
+    const words = data.words.map((word, index) => normalizeWord({
+      ...word,
+      dayNumber: inferDayNumber(word),
+      type: word.type || 'belirsiz',
+      translation: word.translation || word.exampleTr || '',
+      synonyms: word.synonyms || '',
+      antonyms: word.antonyms || '',
+      forms: word.forms || ''
+    }, index));
+    const maxDay = Math.max(60, ...words.map(word => word.dayNumber || 1));
+    base.words = words;
+    base.settings.totalDays = Math.max(data.settings?.totalDays || 60, maxDay);
+    base.settings.dailyGoal = Number(data.settings?.dailyGoal || data.settings?.deckSize || 20);
+    base.settings.fuzzy = Number(data.settings?.fuzzy ?? 1);
+    base.stats = { ...base.stats, ...(data.stats || {}) };
+    return base;
+  }
+
+  return base;
+}
+
+async function loadInitialData() {
+  let local = null;
+  try {
+    local = JSON.parse(localStorage.getItem(STORE) || 'null');
+  } catch (error) {
+    local = null;
+  }
+
+  if (!local) {
+    try {
+      const old = JSON.parse(localStorage.getItem(OLD_STORE) || 'null');
+      if (old) {
+        local = migrateLegacyData(old);
+        localStorage.setItem(STORE, JSON.stringify(local));
+      }
+    } catch (error) {
+      local = null;
+    }
+  }
+
+  if (local) {
+    S = migrateLegacyData(local);
+    ensureSettings();
+    return;
+  }
+
+  try {
+    const response = await fetch(DATA_URL);
+    if (!response.ok) throw new Error('HTTP ' + response.status);
+    const data = await response.json();
+    S = migrateLegacyData(data);
+    ensureSettings();
+    localStorage.setItem(STORE, JSON.stringify(S));
+    notify('Başlangıç verisi yüklendi');
+  } catch (error) {
+    console.error(error);
+    S = defaultState();
+    ensureSettings();
+    notify('Başlangıç verisi bulunamadı, boş şablon açıldı');
+  }
+}
+
+function getDayWords(dayNumber) {
+  return S.words
+    .filter(word => Number(word.dayNumber) === Number(dayNumber))
+    .sort((a, b) => a.word.localeCompare(b.word, 'en'));
+}
+
+function getCurrentDayNumber() {
+  for (let day = 1; day <= S.settings.totalDays; day++) {
+    const words = getDayWords(day);
+    if (!words.length) return day;
+    const allScheduled = words.every(word => word.status !== 'new');
+    if (!allScheduled) return day;
+  }
+  return Math.min(S.settings.totalDays, 1);
+}
+
+function scheduleReviewDay(anchorDay, reviewStep) {
+  return Number(anchorDay) + REVIEW_STEPS[reviewStep];
+}
+
+function getDueReviews(forDay = getCurrentDayNumber()) {
+  return S.words.filter(word =>
+    word.status !== 'new' &&
+    word.status !== 'permanent' &&
+    word.nextReviewDay &&
+    Number(word.nextReviewDay) <= Number(forDay)
+  );
+}
+
+function getReviewQueueForDay(dayNumber) {
+  return getDueReviews(dayNumber);
+}
+
+function isDayComplete(dayNumber) {
+  const words = getDayWords(dayNumber);
+  return words.length > 0 && words.every(word => word.status !== 'new');
+}
+
+function isDayLocked(dayNumber) {
+  const current = getCurrentDayNumber();
+  return dayNumber > current;
+}
+
+function completedDays() {
+  let count = 0;
+  for (let day = 1; day <= S.settings.totalDays; day++) {
+    if (isDayComplete(day)) count++;
+  }
+  return count;
+}
+
+function permanentWords() {
+  return S.words.filter(word => word.status === 'permanent').length;
+}
+
+function dayStats(dayNumber) {
+  const words = getDayWords(dayNumber);
+  const due = words.filter(word => word.nextReviewDay && Number(word.nextReviewDay) <= Number(dayNumber)).length;
+  const permanent = words.filter(word => word.status === 'permanent').length;
+  return {
+    total: words.length,
+    due,
+    permanent,
+    complete: words.length > 0 && words.every(word => word.status !== 'new')
+  };
+}
+
+function updateHeader() {
+  document.getElementById('h-total').textContent = S.words.length;
+  document.getElementById('h-complete').textContent = completedDays();
+  document.getElementById('h-review').textContent = getReviewQueueForDay(getCurrentDayNumber()).length;
+  document.getElementById('h-streak').textContent = S.stats.streak;
+
+  const nextDay = getCurrentDayNumber();
+  const nextWords = getDayWords(nextDay);
+  document.getElementById('m-next-day').textContent = nextDay;
+  document.getElementById('m-day-words').textContent = nextWords.length;
+  document.getElementById('m-due').textContent = getReviewQueueForDay(nextDay).length;
+  document.getElementById('m-permanent').textContent = permanentWords();
+
+  const reviewQueue = getReviewQueueForDay(nextDay);
+  const reviewsBlock = reviewQueue.length > 0;
+  const primary = document.getElementById('hero-primary');
+
+  document.getElementById('current-day-pill').textContent = 'Gün ' + nextDay + ' odakta';
+
+  const topStatus = document.getElementById('top-status');
+  if (reviewsBlock) {
+    document.getElementById('hero-title').textContent = 'Önce tekrar';
+    document.getElementById('hero-copy').textContent = reviewQueue.length + ' kart bekliyor. Bitince Gün ' + nextDay + ' açılır.';
+    if (primary) primary.textContent = 'Tekrarları Bitir';
+    if (topStatus) topStatus.textContent = reviewQueue.length + ' tekrar';
+  } else {
+    document.getElementById('hero-title').textContent = 'Gün ' + nextDay;
+    document.getElementById('hero-copy').textContent = nextWords.length
+      ? nextWords.length + ' kelime hazır. İncele, sonra yazarak test et.'
+      : 'Bu güne kelime ekle, sonra çalışmaya başla.';
+    if (primary) primary.textContent = nextWords.length ? 'Günü Çalış' : 'Kelime Ekle';
+    if (topStatus) topStatus.textContent = nextWords.length ? 'Hazır' : 'Boş gün';
+  }
+  if (primary) {
+    primary.onclick = (!reviewsBlock && !nextWords.length)
+      ? () => switchTab('words', document.querySelector('.nav [data-tab="words"]'))
+      : () => startTodayFlow();
+  }
+
+  document.getElementById('goal-title').textContent = completedDays() + ' / ' + S.settings.totalDays + ' gün tamamlandı';
+  document.getElementById('goal-copy').textContent = reviewsBlock
+    ? 'Tekrar kuyruğu açık. Bitirmeden Gün ' + nextDay + ' kilitli kalır.'
+    : 'Bekleyen tekrar yok. Yeni güne geçebilirsin.';
+}
+
+function renderAgenda() {
+  const nextDay = getCurrentDayNumber();
+  const nextWords = getDayWords(nextDay);
+  const due = getReviewQueueForDay(nextDay);
+  const rows = [
+    { left: 'Bugünün günü', right: 'Gün ' + nextDay },
+    { left: 'Günlük hedef', right: S.settings.dailyGoal + ' kelime' },
+    { left: 'Yüklü kelime', right: nextWords.length + ' kelime' },
+    { left: 'Bekleyen tekrar', right: due.length ? due.length + ' kart · kilitli' : '0 kart' }
+  ];
+  document.getElementById('agenda-list').innerHTML = rows.map(row =>
+    `<div class="mini-row"><span>${row.left}</span><strong>${row.right}</strong></div>`
+  ).join('');
+}
+
+function renderReviewQueue() {
+  const due = getReviewQueueForDay(getCurrentDayNumber()).slice(0, 8);
+  const box = document.getElementById('review-list');
+  if (!due.length) {
+    box.innerHTML = '<div class="empty-state">Bugün için bekleyen tekrar yok. Yeni güne geçebilirsin.</div>';
+    return;
+  }
+  box.innerHTML = due.map(word =>
+    `<div class="mini-row"><span>${escapeHtml(stripMarks(word.word))}</span><strong>${formatMarkedText(word.meaning)}</strong></div>`
+  ).join('');
+}
+
+function renderDayGrid() {
+  const container = document.getElementById('day-grid');
+  const current = getCurrentDayNumber();
+  const html = [];
+  for (let day = 1; day <= S.settings.totalDays; day++) {
+    const stats = dayStats(day);
+    const cls = [
+      'day-card',
+      day === current ? 'current' : '',
+      stats.complete ? 'complete' : '',
+      isDayLocked(day) ? 'locked' : ''
+    ].join(' ').trim();
+    let statusHtml = '<span class="status-badge status-locked">Bekliyor</span>';
+    if (day === current) statusHtml = '<span class="status-badge status-current">Sıradaki gün</span>';
+    if (day === current && getReviewQueueForDay(day).length) {
+      statusHtml = '<span class="status-badge status-current">Önce tekrar</span>';
+    }
+    if (stats.complete) statusHtml = '<span class="status-badge status-complete">Tamamlandı</span>';
+    html.push(`
+      <button class="${cls}" onclick="openDay(${day})">
+        <h4>Gün ${day}</h4>
+        <div class="day-meta">${stats.total} kelime<br>${stats.permanent} kalıcı · ${stats.due} tekrar</div>
+        ${statusHtml}
+      </button>
+    `);
+  }
+  container.innerHTML = html.join('');
+}
+
+function escapeHtml(text) {
+  return String(text || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatMarkedText(text) {
+  return escapeHtml(text).replace(/\*([^*\n]+)\*/g, '<span class="mark">$1</span>');
+}
+
+function stripMarks(text) {
+  return String(text || '').replace(/\*([^*\n]+)\*/g, '$1');
+}
+
+function openDay(dayNumber) {
+  const words = getDayWords(dayNumber);
+  if (!words.length) {
+    notify('Gün ' + dayNumber + ' için henüz kelime eklenmemiş');
+    switchTab('words', document.querySelector('.nav [data-tab="words"]'));
+    document.getElementById('f-day').value = String(dayNumber);
+    toggleAddForm(true);
+    return;
+  }
+  startDay(dayNumber);
+}
+
+function startTodayFlow() {
+  startCurrentDay();
+}
+
+function startCurrentDay() {
+  startDay(getCurrentDayNumber());
+}
+
+function startDay(dayNumber) {
+  const words = getDayWords(dayNumber);
+  if (!words.length) {
+    notify('Bu gün için önce kelime eklemelisin');
+    return;
+  }
+  const hasNew = words.some(word => word.status === 'new');
+  const reviewQueue = getReviewQueueForDay(dayNumber);
+  if (hasNew && reviewQueue.length) {
+    notify('Tekrarlar bitmeden Gün ' + dayNumber + ' açılmaz');
+    startDueReviews(dayNumber, reviewQueue);
+    return;
+  }
+  const newWords = words.filter(word => word.status === 'new');
+  const queue = (newWords.length ? newWords : words).map(word => word.id);
+  session = {
+    mode: 'day',
+    phase: 'study',
+    dayNumber,
+    pendingDay: null,
+    queue,
+    index: 0,
+    answered: false,
+    completedIds: []
+  };
+  startStudyCard();
+}
+
+function startDueReviews(pendingDay, reviewWords) {
+  const day = pendingDay || getCurrentDayNumber();
+  const due = reviewWords || getReviewQueueForDay(day);
+  if (!due.length) {
+    notify('Bugün bekleyen tekrar yok');
+    if (pendingDay) startDay(pendingDay);
+    return;
+  }
+  session = {
+    mode: 'review',
+    phase: 'recall',
+    dayNumber: null,
+    pendingDay: pendingDay || day,
+    queue: shuffle(due.map(word => word.id)),
+    index: 0,
+    answered: false,
+    completedIds: []
+  };
+  showStudyCard();
+}
+
+function startStudyCard() {
+  session.phase = 'study';
+  session.answered = false;
+  showStudyCard();
+}
+
+function currentWord() {
+  const id = session.queue[session.index];
+  return S.words.find(word => word.id === id) || null;
+}
+
+function showStudyCard() {
+  const word = currentWord();
+  const empty = document.getElementById('study-empty');
+  const view = document.getElementById('study-view');
+  const actions = document.getElementById('study-actions');
+  const recallWrap = document.getElementById('recall-wrap');
+  const feedback = document.getElementById('feedback');
+
+  if (!word) {
+    finishSession();
+    return;
+  }
+
+  empty.classList.add('hidden');
+  view.classList.remove('hidden');
+  feedback.className = 'feedback';
+  const isRecall = session.phase === 'recall';
+  recallWrap.classList.toggle('show', isRecall);
+  actions.innerHTML = '';
+
+  const home = document.getElementById('home-panel');
+  if (home) home.classList.add('hidden');
+
+  const stageTitle = session.mode === 'review'
+    ? 'Tekrar'
+    : (isRecall ? 'Yazarak test' : 'İncele');
+  const title = session.mode === 'review'
+    ? 'Bekleyen tekrarlar'
+    : 'Gün ' + session.dayNumber;
+
+  document.getElementById('study-stage').textContent = stageTitle;
+  document.getElementById('study-title').textContent = title;
+  document.getElementById('study-progress').textContent = (session.index + 1) + ' / ' + session.queue.length;
+
+  document.getElementById('study-word').textContent = stripMarks(word.word);
+  document.getElementById('study-type').textContent = word.type || 'belirsiz';
+  document.getElementById('study-meaning').innerHTML = formatMarkedText(word.meaning || '-');
+  document.getElementById('study-example').innerHTML = formatMarkedText(word.example || 'Örnek yok');
+  document.getElementById('study-translation').innerHTML = formatMarkedText(word.translation || '');
+  document.getElementById('study-synonyms').innerHTML = formatMarkedText(word.synonyms || '-');
+  document.getElementById('study-antonyms').innerHTML = formatMarkedText(word.antonyms || '-');
+  document.getElementById('study-forms').innerHTML = formatMarkedText(word.forms || '-');
+
+  const front = document.getElementById('study-front');
+  if (front) front.classList.toggle('hidden', isRecall);
+
+  const dots = document.getElementById('review-dots');
+  if (session.mode === 'review') {
+    dots.innerHTML = REVIEW_STEPS.map((step, index) =>
+      `<i class="${index < (word.reviewStep || 0) ? 'filled' : ''}"></i>`
+    ).join('');
+  } else {
+    dots.innerHTML = '';
+  }
+
+  if (!isRecall && session.mode === 'day') {
+    actions.innerHTML = `
+      <button class="primary-btn" onclick="nextStudyWord()">Sonraki</button>
+      <button class="soft-btn" onclick="goRecallPhase()">Teste geç</button>
+    `;
+  } else if (!isRecall) {
+    actions.innerHTML = `
+      <button class="primary-btn" onclick="goRecallPhase()">Teste geç</button>
+    `;
+  }
+
+  document.getElementById('answer-input').value = '';
+  if (isRecall) document.getElementById('answer-input').focus();
+}
+
+function nextStudyWord() {
+  session.index++;
+  if (session.index >= session.queue.length) {
+    session.index = 0;
+    goRecallPhase();
+    return;
+  }
+  showStudyCard();
+}
+
+function goRecallPhase() {
+  session.phase = 'recall';
+  session.index = 0;
+  session.answered = false;
+  session.queue = shuffle([...new Set(session.queue)]);
+  showStudyCard();
+}
+
+function showHint() {
+  const word = currentWord();
+  if (!word) return;
+  const first = meaningVariants(word)[0] || '';
+  const hint = first ? first[0] + '_'.repeat(Math.max(0, first.length - 1)) : '-';
+  notify('İpucu: ' + hint);
+}
+
+function skipCurrent() {
+  if (!session.queue.length) return;
+  const [current] = session.queue.splice(session.index, 1);
+  session.queue.push(current);
+  if (session.index >= session.queue.length) session.index = 0;
+  showStudyCard();
+}
+
+function logStudy(reviewCount = 0, learnedCount = 0) {
+  const t = today();
+  if (!S.stats.dailyLog[t]) {
+    S.stats.dailyLog[t] = { reviews: 0, learned: 0 };
+  }
+  S.stats.dailyLog[t].reviews += reviewCount;
+  S.stats.dailyLog[t].learned += learnedCount;
+  if (reviewCount > 0 || learnedCount > 0) {
+    S.stats.totalReviews += reviewCount;
+    if (S.stats.lastStudyDate !== t) {
+      const yesterday = addDays(t, -1);
+      S.stats.streak = S.stats.lastStudyDate === yesterday ? S.stats.streak + 1 : 1;
+      S.stats.lastStudyDate = t;
+    }
+  }
+}
+
+function submitAnswer() {
+  const word = currentWord();
+  if (!word) return;
+
+  const value = document.getElementById('answer-input').value.trim();
+  if (!value) {
+    notify('Bir cevap yaz');
+    return;
+  }
+
+  const ok = checkAnswer(value, word);
+  const feedback = document.getElementById('feedback');
+  const title = document.getElementById('feedback-title');
+  const copy = document.getElementById('feedback-copy');
+
+  if (ok) {
+    feedback.className = 'feedback show ok';
+    title.textContent = 'Doğru';
+    copy.innerHTML = formatMarkedText(word.meaning) + (word.example ? ' | ' + formatMarkedText(word.example) : '');
+    applySuccess(word);
+    setTimeout(() => {
+      session.index++;
+      showStudyCard();
+    }, 650);
+  } else {
+    feedback.className = 'feedback show fail';
+    title.textContent = 'Yanlış';
+    copy.innerHTML = 'Doğru cevap: ' + formatMarkedText(word.meaning);
+    applyFailure(word);
+    setTimeout(() => showStudyCard(), 900);
+  }
+}
+
+function applySuccess(word) {
+  if (session.mode === 'day') {
+    word.status = 'learning';
+    word.reviewStep = 0;
+    word.reviewAnchorDay = word.dayNumber;
+    word.nextReviewDay = scheduleReviewDay(word.reviewAnchorDay, 0);
+    word.nextReview = null;
+    word.completedAt = today();
+    word.lastReviewed = today();
+    session.completedIds.push(word.id);
+    logStudy(0, 1);
+  } else {
+    word.reviewStep = Math.min(REVIEW_STEPS.length, (word.reviewStep || 0) + 1);
+    word.lastReviewed = today();
+    if (word.reviewStep >= REVIEW_STEPS.length) {
+      word.status = 'permanent';
+      word.nextReviewDay = null;
+      word.nextReview = null;
+    } else {
+      word.status = 'review';
+      word.nextReviewDay = scheduleReviewDay(word.reviewAnchorDay || word.dayNumber, word.reviewStep);
+      word.nextReview = null;
+    }
+    logStudy(1, 0);
+  }
+  persist();
+  updateHeader();
+}
+
+function applyFailure(word) {
+  if (session.mode === 'day') {
+    const currentId = session.queue[session.index];
+    session.queue.push(currentId);
+    session.index++;
+  } else {
+    word.reviewStep = Math.max(0, (word.reviewStep || 1) - 1);
+    word.status = 'review';
+    word.nextReviewDay = session.pendingDay || getCurrentDayNumber();
+    word.nextReview = null;
+    const currentId = session.queue[session.index];
+    session.queue.push(currentId);
+    session.index++;
+    logStudy(1, 0);
+    persist();
+    updateHeader();
+  }
+}
+
+function finishSession() {
+  const wasReview = session.mode === 'review';
+  const pendingDay = session.pendingDay;
+  const finishedDay = session.dayNumber;
+  document.getElementById('study-stage').textContent = 'Tamamlandı';
+  const title = wasReview
+    ? 'Tekrar oturumu bitti'
+    : 'Gün ' + finishedDay + ' tamamlandı';
+  const copy = wasReview
+    ? (pendingDay ? 'Tekrarlar bitti. Gün ' + pendingDay + ' şimdi açılıyor.' : 'Bugünkü tekrar kuyruğu temizlendi.')
+    : 'Bu günün kelimeleri kaymalı tekrar planına alındı.';
+  document.getElementById('study-title').textContent = title;
+  document.getElementById('study-progress').textContent = copy;
+  document.getElementById('study-empty').classList.remove('hidden');
+  document.getElementById('study-empty').textContent = copy;
+  document.getElementById('study-view').classList.add('hidden');
+  const homeDone = document.getElementById('home-panel');
+  if (homeDone) homeDone.classList.remove('hidden');
+  if (!wasReview && finishedDay) notify('Gün ' + finishedDay + ' tamamlandı');
+  if (wasReview) notify('Tekrarlar tamamlandı');
+  session = emptySession();
+  updateHeader();
+  renderAgenda();
+  renderReviewQueue();
+  renderDayGrid();
+  renderWords();
+  renderStats();
+  if (wasReview && pendingDay) {
+    const remaining = getReviewQueueForDay(pendingDay);
+    if (remaining.length) {
+      startDueReviews(pendingDay, remaining);
+      return;
+    }
+    startDay(pendingDay);
+  }
+}
+
+function switchTab(tab, el) {
+  document.querySelectorAll('.nav button').forEach(item => item.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(item => item.classList.remove('active'));
+  if (el) el.classList.add('active');
+  else {
+    const btn = document.querySelector('.nav [data-tab="' + tab + '"]');
+    if (btn) btn.classList.add('active');
+  }
+  document.getElementById('tab-' + tab).classList.add('active');
+  if (tab === 'words') renderWords();
+  if (tab === 'settings') renderStats();
+}
+
+function fillDayOptions() {
+  const select = document.getElementById('f-day');
+  select.innerHTML = Array.from({ length: S.settings.totalDays }, (_, i) => i + 1)
+    .map(day => `<option value="${day}">Gün ${day}</option>`)
+    .join('');
+  select.value = String(getCurrentDayNumber());
+}
+
+function toggleAddForm(force) {
+  const form = document.getElementById('add-form');
+  const shouldShow = typeof force === 'boolean' ? force : !form.classList.contains('vis');
+  form.classList.toggle('vis', shouldShow);
+  if (shouldShow) {
+    fillDayOptions();
+    document.getElementById('f-word').focus();
+  }
+}
+
+function saveWord() {
+  const dayNumber = Number(document.getElementById('f-day').value);
+  const word = document.getElementById('f-word').value.trim();
+  const type = document.getElementById('f-type').value.trim();
+  const meaning = document.getElementById('f-meaning').value.trim();
+  if (!word || !meaning) {
+    notify('İngilizce kelime ve Türkçe karşılığı zorunlu');
+    return;
+  }
+
+  S.words.push(normalizeWord({
+    id: 'w_' + Date.now(),
+    dayNumber,
+    word,
+    type: type || 'belirsiz',
+    meaning,
+    example: document.getElementById('f-example').value.trim(),
+    translation: document.getElementById('f-translation').value.trim(),
+    synonyms: document.getElementById('f-synonyms').value.trim(),
+    antonyms: document.getElementById('f-antonyms').value.trim(),
+    forms: document.getElementById('f-forms').value.trim(),
+    status: 'new',
+    reviewStep: 0,
+    reviewAnchorDay: dayNumber,
+    nextReviewDay: null,
+    nextReview: null,
+    addedDate: today()
+  }, S.words.length));
+
+  persist();
+  ['f-word','f-type','f-meaning','f-example','f-translation','f-synonyms','f-antonyms','f-forms'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  updateHeader();
+  renderAgenda();
+  renderReviewQueue();
+  renderDayGrid();
+  renderWords();
+  renderStats();
+  notify('Kelime eklendi');
+}
+
+function deleteWord(id) {
+  if (!confirm('Bu kelime silinsin mi?')) return;
+  S.words = S.words.filter(word => word.id !== id);
+  persist();
+  updateHeader();
+  renderAgenda();
+  renderReviewQueue();
+  renderDayGrid();
+  renderWords();
+  renderStats();
+  notify('Kelime silindi');
+}
+
+function renderWords() {
+  fillDayOptions();
+  const query = normalizeText(document.getElementById('search-input').value);
+  const list = document.getElementById('word-list');
+  const chunks = [];
+
+  for (let day = 1; day <= S.settings.totalDays; day++) {
+    let words = getDayWords(day);
+    if (query) {
+      words = words.filter(word =>
+        normalizeText(stripMarks(word.word)).includes(query) ||
+        normalizeText(stripMarks(word.meaning)).includes(query) ||
+        normalizeText(stripMarks(word.example)).includes(query)
+      );
+    }
+    if (!words.length) continue;
+    chunks.push(`
+      <div class="day-group">
+        <div class="day-group-head">
+          <div>
+            <div class="card-title" style="font-size:16px;margin-bottom:4px">Gün ${day}</div>
+            <div class="card-sub">${words.length} kelime</div>
+          </div>
+          <button class="soft-btn" style="width:auto;padding:8px 12px" onclick="startDay(${day});switchTab('learn', document.querySelector('.nav [data-tab=\'learn\']'))">${getReviewQueueForDay(day).length && words.some(w => w.status === 'new') ? 'Tekrar' : 'Çalış'}</button>
+        </div>
+        ${words.map(word => `
+          <div class="word-row">
+            <div class="word-main">
+              <strong>${escapeHtml(stripMarks(word.word))}</strong>
+              <span>${escapeHtml(word.type)}</span>
+            </div>
+            <div class="word-extra">${formatMarkedText(word.meaning)}<br><span style="color:var(--muted)">${formatMarkedText(word.example || '-')}</span></div>
+            <div class="word-level ${word.status === 'new' ? 'lvl-new' : word.status === 'permanent' ? 'lvl-review' : 'lvl-learning'}">${statusLabel(word.status)}</div>
+            <button class="danger-btn" style="width:auto;margin-top:8px;padding:8px 12px" onclick="deleteWord('${word.id}')">Sil</button>
+          </div>
+        `).join('')}
+      </div>
+    `);
+  }
+
+  list.innerHTML = chunks.length ? chunks.join('') : '<div class="empty-state">Henüz kelime yok. Formu açıp ilk günü doldurmaya başlayabilirsin.</div>';
+}
+
+function statusLabel(status) {
+  if (status === 'new') return 'Yeni';
+  if (status === 'permanent') return 'Kalıcı';
+  return 'Öğreniliyor';
+}
+
+function renderStats() {
+  document.getElementById('st-total').textContent = S.words.length;
+  document.getElementById('st-complete').textContent = completedDays();
+  document.getElementById('st-due').textContent = getDueReviews(getCurrentDayNumber()).length;
+  document.getElementById('st-reviews').textContent = S.stats.totalReviews || 0;
+
+  document.getElementById('stats-days').innerHTML = Array.from({ length: S.settings.totalDays }, (_, i) => i + 1).map(day => {
+    const stats = dayStats(day);
+    const label = stats.complete ? 'Tamamlandı' : (isDayLocked(day) ? 'Bekliyor' : 'Aktif');
+    return `<tr>
+      <td>Gün ${day}</td>
+      <td>${stats.total}</td>
+      <td>${label}</td>
+      <td>${stats.permanent}</td>
+      <td>${stats.due}</td>
+    </tr>`;
+  }).join('');
+
+  const entries = Object.entries(S.stats.dailyLog || {})
+    .sort((a, b) => b[0].localeCompare(a[0]))
+    .slice(0, 10);
+  document.getElementById('stats-log').innerHTML = entries.length
+    ? entries.map(([date, log]) => `<tr><td>${date}</td><td>${log.learned || 0}</td><td>${log.reviews || 0}</td></tr>`).join('')
+    : '<tr><td colspan="3">Henüz çalışma kaydı yok.</td></tr>';
+}
+
+function saveSetting(key, value) {
+  S.settings[key] = Number(value);
+  if (key === 'totalDays') fillDayOptions();
+  ensureSettings();
+  persist();
+  updateHeader();
+  renderAgenda();
+  renderReviewQueue();
+  renderDayGrid();
+  renderWords();
+  renderStats();
+  notify('Ayar kaydedildi');
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'yds-60-gun-' + today() + '.json';
+  link.click();
+}
+
+function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = event => {
+    try {
+      const data = JSON.parse(event.target.result);
+      S = migrateLegacyData(data);
+      ensureSettings();
+      persist();
+      hydrateUI();
+      notify('Veri içe aktarıldı');
+    } catch (error) {
+      console.error(error);
+      notify('JSON okunamadı');
+    }
+  };
+  reader.readAsText(file);
+  input.value = '';
+}
+
+function downloadTemplate() {
+  const template = defaultTemplate();
+  template.words = [];
+  for (let day = 1; day <= 60; day++) {
+    for (let order = 1; order <= 20; order++) {
+      template.words.push({
+        id: 'day' + String(day).padStart(2, '0') + '_word' + String(order).padStart(2, '0'),
+        dayNumber: day,
+        word: '',
+        type: '',
+        meaning: '',
+        example: '',
+        translation: '',
+        synonyms: '',
+        antonyms: '',
+        forms: '',
+        status: 'new',
+        reviewStep: 0,
+        reviewAnchorDay: day,
+        nextReviewDay: null,
+        nextReview: null,
+        lastReviewed: null,
+        completedAt: null,
+        addedDate: today()
+      });
+    }
+  }
+  const blob = new Blob([JSON.stringify(template, null, 2)], { type: 'application/json' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'yds-60-gun-sablon.json';
+  link.click();
+}
+
+function resetAll() {
+  if (!confirm('Tüm kelimeler ve ilerleme silinsin mi?')) return;
+  S = defaultState();
+  ensureSettings();
+  persist();
+  hydrateUI();
+  notify('Veriler sıfırlandı');
+}
+
+function hydrateUI() {
+  document.getElementById('set-total-days').value = S.settings.totalDays;
+  document.getElementById('set-daily-goal').value = S.settings.dailyGoal;
+  document.getElementById('set-fuzzy').value = S.settings.fuzzy;
+  fillDayOptions();
+  updateHeader();
+  renderAgenda();
+  renderReviewQueue();
+  renderDayGrid();
+  renderWords();
+  renderStats();
+}
+
+document.getElementById('answer-input').addEventListener('keydown', event => {
+  if (event.key === 'Enter') {
+    event.preventDefault();
+    submitAnswer();
+  }
+});
+
+load();
+
+async function load() {
+  showLoading(true);
+  await loadInitialData();
+  ensureSettings();
+  hydrateUI();
+  showLoading(false);
+  window._appReady = true;
+}
+</script>
+</body>
+</html>
