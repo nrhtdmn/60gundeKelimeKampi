@@ -152,11 +152,6 @@ button{cursor:pointer;touch-action:manipulation}
   color:var(--text);padding:11px 14px;border-radius:12px;z-index:50;width:min(420px,calc(100% - 28px));text-align:center;font-size:13px
 }
 .notif.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.loading{position:fixed;inset:0;background:rgba(15,17,22,.94);display:none;align-items:center;justify-content:center;z-index:60}
-.loading.active{display:flex}
-.loading-box{text-align:center}
-.loading-box strong{display:block;font-family:'Literata',serif;font-size:24px;color:var(--accent);margin-bottom:8px}
-.loading-box span{font-size:13px;color:var(--sub)}
 @media(min-width:720px){
   .study-word{font-size:46px}
   .home-title{font-size:32px}
@@ -312,7 +307,6 @@ button{cursor:pointer;touch-action:manipulation}
 </nav>
 
 <div id="notif" class="notif"></div>
-<div id="loading" class="loading"><div class="loading-box"><strong>YDS 60 Gün</strong><span>Yükleniyor...</span></div></div>
 
 <div class="hidden">
   <div id="h-review">0</div>
@@ -331,13 +325,19 @@ button{cursor:pointer;touch-action:manipulation}
 </div>
 
 <script>
-const STORE = 'yds_60gun_v1';
-const OLD_STORE = 'yds_nd_v5';
+const STORE = 'yds_60gun_v2';
+const OLD_STORE = 'yds_60gun_v1';
+const LEGACY_STORE = 'yds_nd_v5';
 const REVIEW_STEPS = [1, 3, 6, 13, 20, 29];
-const DATA_URL = './kelimeler.json';
 
 let S = defaultState();
 let session = emptySession();
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations().then(regs => {
+    regs.forEach(reg => reg.unregister());
+  }).catch(() => {});
+}
 
 function emptySession() {
   return {
@@ -369,10 +369,6 @@ function defaultState() {
     },
     lastUpdated: 0
   };
-}
-
-function showLoading(show) {
-  document.getElementById('loading').classList.toggle('active', show);
 }
 
 function today() {
@@ -443,9 +439,9 @@ function notify(message) {
 
 function ensureSettings() {
   S.settings = S.settings || {};
-  S.settings.totalDays = Number(S.settings.totalDays || 60);
-  S.settings.dailyGoal = Number(S.settings.dailyGoal || 20);
-  S.settings.fuzzy = Number(S.settings.fuzzy ?? 1);
+  S.settings.totalDays = Math.min(365, Math.max(1, Number(S.settings.totalDays || 60)));
+  S.settings.dailyGoal = Math.min(100, Math.max(1, Number(S.settings.dailyGoal || 20)));
+  S.settings.fuzzy = Math.min(3, Math.max(0, Number(S.settings.fuzzy ?? 1)));
   S.stats = S.stats || { streak: 0, lastStudyDate: null, totalReviews: 0, dailyLog: {} };
   S.stats.dailyLog = S.stats.dailyLog || {};
   S.words = (S.words || []).map((word, index) => normalizeWord(word, index));
@@ -514,9 +510,8 @@ function migrateLegacyData(data) {
       antonyms: word.antonyms || '',
       forms: word.forms || ''
     }, index));
-    const maxDay = Math.max(60, ...words.map(word => word.dayNumber || 1));
     base.words = words;
-    base.settings.totalDays = Math.max(data.settings?.totalDays || 60, maxDay);
+    base.settings.totalDays = Number(data.settings?.totalDays || 60);
     base.settings.dailyGoal = Number(data.settings?.dailyGoal || data.settings?.deckSize || 20);
     base.settings.fuzzy = Number(data.settings?.fuzzy ?? 1);
     base.stats = { ...base.stats, ...(data.stats || {}) };
@@ -526,46 +521,54 @@ function migrateLegacyData(data) {
   return base;
 }
 
-async function loadInitialData() {
-  let local = null;
-  try {
-    local = JSON.parse(localStorage.getItem(STORE) || 'null');
-  } catch (error) {
-    local = null;
-  }
+function isUsableSave(data) {
+  return !!(data && Array.isArray(data.words) && data.words.length <= 1500);
+}
 
-  if (!local) {
-    try {
-      const old = JSON.parse(localStorage.getItem(OLD_STORE) || 'null');
-      if (old) {
-        local = migrateLegacyData(old);
+function readStore(key) {
+  try {
+    return JSON.parse(localStorage.getItem(key) || 'null');
+  } catch (error) {
+    return null;
+  }
+}
+
+async function loadInitialData() {
+  let local = readStore(STORE);
+
+  if (!isUsableSave(local)) {
+    local = null;
+    const old = readStore(OLD_STORE);
+    if (isUsableSave(old)) {
+      local = migrateLegacyData(old);
+      try {
         localStorage.setItem(STORE, JSON.stringify(local));
+      } catch (error) {
+        console.error(error);
       }
-    } catch (error) {
-      local = null;
     }
   }
 
-  if (local) {
+  if (!isUsableSave(local)) {
+    const legacy = readStore(LEGACY_STORE);
+    if (isUsableSave(legacy)) {
+      local = migrateLegacyData(legacy);
+      try {
+        localStorage.setItem(STORE, JSON.stringify(local));
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
+  if (isUsableSave(local)) {
     S = migrateLegacyData(local);
     ensureSettings();
     return;
   }
 
-  try {
-    const response = await fetch(DATA_URL);
-    if (!response.ok) throw new Error('HTTP ' + response.status);
-    const data = await response.json();
-    S = migrateLegacyData(data);
-    ensureSettings();
-    localStorage.setItem(STORE, JSON.stringify(S));
-    notify('Başlangıç verisi yüklendi');
-  } catch (error) {
-    console.error(error);
-    S = defaultState();
-    ensureSettings();
-    notify('Başlangıç verisi bulunamadı, boş şablon açıldı');
-  }
+  S = defaultState();
+  ensureSettings();
 }
 
 function getDayWords(dayNumber) {
@@ -1342,12 +1345,17 @@ document.getElementById('answer-input').addEventListener('keydown', event => {
 load();
 
 async function load() {
-  showLoading(true);
-  await loadInitialData();
-  ensureSettings();
-  hydrateUI();
-  showLoading(false);
-  window._appReady = true;
+  try {
+    await loadInitialData();
+    ensureSettings();
+    hydrateUI();
+    window._appReady = true;
+  } catch (error) {
+    console.error(error);
+    S = defaultState();
+    ensureSettings();
+    try { hydrateUI(); } catch (uiError) { console.error(uiError); }
+  }
 }
 </script>
 </body>
